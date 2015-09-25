@@ -18,14 +18,14 @@
         android:orientation="horizontal">
         <ImageView
             android:layout_weight="50"
-            android:src="@drawable/france"
+            android:src="@drawable/united_kingdom"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:id="@+id/flag_from"/>
 
         <ImageView
             android:layout_weight="50"
-            android:src="@drawable/united_kingdom"
+            android:src="@drawable/france"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:id="@+id/flag_to"/>

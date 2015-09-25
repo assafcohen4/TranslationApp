@@ -5,16 +5,12 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ClipboardManager;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
 import com.cohen.assaf.emptywords.model.Language;
 import com.cohen.assaf.emptywords.views.MainActivity;
-import com.parse.CountCallback;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -23,22 +19,26 @@ import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
-import com.wagnerandade.coollection.Coollection;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.util.List;
+import android.provider.Settings.Secure;
 
 
 public class TranslationService  extends IntentService implements ClipboardManager.OnPrimaryClipChangedListener {
+
+    public static final String WORD_COUPLE = "wordCouple";
+    public static final String ORIGINAL = "original";
+    public static final String TRANSLATION = "translation";
 
     private Language mFrom;
     private Language mTo;
     private String mTranslation;
     private ClipboardManager mClipboardManager;
-    public static final String WORD_COUPLE = "wordCouple";
-    public static final String ORIGINAL = "original";
-    public static final String TRANSLATION = "translation";
+    private String mDeviceId;
+
 
 
     public TranslationService() {
@@ -67,6 +67,7 @@ public class TranslationService  extends IntentService implements ClipboardManag
     @Override
     public void onPrimaryClipChanged() {
 
+        getDeviceId();
         ClipData clip = mClipboardManager.getPrimaryClip();
         String copiedText = clip.getItemAt(0).getText().toString().toLowerCase();
         connectToTranslationApi(copiedText);
@@ -103,7 +104,7 @@ public class TranslationService  extends IntentService implements ClipboardManag
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                //TODO handle failure
+                mTranslation = "Could not connect to network";
             }
 
             @Override
@@ -112,7 +113,7 @@ public class TranslationService  extends IntentService implements ClipboardManag
                     String jsonData = response.body().string();
                     try {
                         mTranslation = getTextTranslation(jsonData);
-                        sendWordsToCloud(copiedPhrase, mTranslation);
+                        connectToParse(copiedPhrase, mTranslation);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -132,11 +133,16 @@ public class TranslationService  extends IntentService implements ClipboardManag
         return translation;
     }
 
-    private void sendWordsToCloud(final String original, String translation){
+    private void connectToParse(final String original, String translation){
+
+
+
+
 
         final ParseObject wordCouple = new ParseObject(WORD_COUPLE);
         wordCouple.put(ORIGINAL, original);
         wordCouple.put(TRANSLATION, translation);
+
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery(WORD_COUPLE);
         query.findInBackground(new FindCallback<ParseObject>() {
@@ -158,5 +164,10 @@ public class TranslationService  extends IntentService implements ClipboardManag
             }
         }
         return doesCoupleExist;
+    }
+
+    private void getDeviceId(){
+        mDeviceId =  Secure.getString(this.getContentResolver(),
+                Secure.ANDROID_ID);
     }
 }

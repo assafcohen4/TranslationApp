@@ -11,10 +11,13 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
+import android.telephony.TelephonyManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.provider.Settings.Secure;
 
+import com.cohen.assaf.emptywords.LanguagesSingleton;
 import com.cohen.assaf.emptywords.model.Language;
 import com.cohen.assaf.emptywords.R;
 import com.cohen.assaf.emptywords.TranslationService;
@@ -28,15 +31,17 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity {
 
     //TODO nice gui,
+    // PARSE USERS!!!,// PARSE USERS!!!,// PARSE USERS!!!,// PARSE USERS!!!,
     // solve concurrency,
     // proper notification bar,
     // stop service,
     // proper widget,
-    // multi user on parse,
+
     public static final int FROM = 1;
     public static final int TO = 2;
     public static final String FROM_STRING = "from";
     public static final String TO_STRING = "to";
+
 
     private Language mLanguageFrom;
     private Language mLanguageTo;
@@ -82,6 +87,11 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, "MIc9O1nwpQa5lKNuPkdtzXcPRTB8Mg6HxWmoaTbI", "G59SiIMtEsTIA7846icPsapsg8MWafaGRPaJNVZ2");
+        LanguagesSingleton mSingleton = LanguagesSingleton.getInstance();
+        mLanguageFrom = mSingleton.getLanguage(0);
+        mLanguageTo = mSingleton.getLanguage(1);
+
+
     }
 
     @Override

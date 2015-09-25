@@ -23,6 +23,10 @@ public class LanguagesSingleton {
         return mLanguagesList;
     }
 
+    public static Language getLanguage(int position){
+        return mLanguagesList[position];
+    }
+
     public static LanguagesSingleton getInstance() {
         if(instance == null) {
             instance = new LanguagesSingleton();
