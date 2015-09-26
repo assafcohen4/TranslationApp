@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     //TODO nice gui,
     // PARSE USERS!!!,// PARSE USERS!!!,// PARSE USERS!!!,// PARSE USERS!!!,
-    // solve concurrency,
+    // change so that will wait until translation or 3 seconds (now always waits a three seconds)
     // proper notification bar,
     // stop service,
     // proper widget,
