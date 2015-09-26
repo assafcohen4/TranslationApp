@@ -1,5 +1,6 @@
 package com.cohen.assaf.emptywords.views;
 
+import android.accounts.Account;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.app.NotificationManager;
@@ -32,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
 
     //TODO nice gui,
     // PARSE USERS!!!,// PARSE USERS!!!,// PARSE USERS!!!,// PARSE USERS!!!,
-    // change so that will wait until translation or 3 seconds (now always waits a three seconds)
     // proper notification bar,
     // stop service,
     // proper widget,
@@ -90,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
         LanguagesSingleton mSingleton = LanguagesSingleton.getInstance();
         mLanguageFrom = mSingleton.getLanguage(0);
         mLanguageTo = mSingleton.getLanguage(1);
+        TranslationService service = new TranslationService();
+
 
 
     }

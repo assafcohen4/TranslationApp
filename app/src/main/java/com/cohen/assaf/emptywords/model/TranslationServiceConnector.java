@@ -53,19 +53,16 @@ public class TranslationServiceConnector {
             public void onResponse(Response response) throws IOException {
                 if (response.isSuccessful()) {
                     try {
-                        translation[0] = getTextTranslation(response.body().string());
+                        translation[0] = getTextFromJsonData(response.body().string());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-//                    try {
-//                        connectToParse(copiedPhrase, mTranslation);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
+//todo connect to parse to store word
                 }
             }
         });
 
+        //this is needed to give enough time for call.enqueue to respond and thus for translation[0] to initialise
         waitUntilTimeIsUp(translation[0]);
 
         if(translation[0]== null ){
@@ -83,18 +80,14 @@ public class TranslationServiceConnector {
                 isTimeUp[0] = true;
                 Log.d("time up", "time is up");
             }
-        }, 1000);
+        }, 900);
 
         while(isTimeUp[0] == false){
             continue;
         }
     }
 
-    private Boolean checkIfStillNull(String translation){
-        return translation == null;
-    }
-
-    private String getTextTranslation(String jsonData) throws JSONException {
+    private String getTextFromJsonData(String jsonData) throws JSONException {
         JSONObject data = new JSONObject(jsonData);
         String translation = data.getString("text");
         translation = translation.replace("]", "")

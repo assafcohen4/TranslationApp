@@ -6,4 +6,5 @@
     <string name="languages">Languages</string>
     <string name="title_activity_translation_widget_configure">TranslationWidgetConfigure</string>
     <string name="title_activity_widget">WidgetActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
 </resources>
