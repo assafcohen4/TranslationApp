@@ -1,7 +1,5 @@
 package com.cohen.assaf.emptywords;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.IntentService;
 import android.content.ClipData;
 import android.content.Context;
@@ -10,6 +8,8 @@ import android.content.ClipboardManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
+
+import com.cohen.assaf.emptywords.model.Database;
 import com.cohen.assaf.emptywords.model.Language;
 import com.cohen.assaf.emptywords.model.TranslationServiceConnector;
 import com.cohen.assaf.emptywords.model.WordPair;
@@ -22,8 +22,6 @@ import com.parse.ParseQuery;
 import java.io.IOException;
 import java.util.List;
 
-import android.provider.Settings.Secure;
-
 
 public class TranslationService  extends IntentService implements ClipboardManager.OnPrimaryClipChangedListener {
 
@@ -35,8 +33,7 @@ public class TranslationService  extends IntentService implements ClipboardManag
     private Language mTo;
     private WordPair mPair;
     private ClipboardManager mClipboardManager;
-    private String mDeviceId;
-
+    private Database mDatabase;
 
 
     public TranslationService() {
@@ -58,6 +55,7 @@ public class TranslationService  extends IntentService implements ClipboardManag
         mTo = (Language) intent.getSerializableExtra(MainActivity.TO_STRING);
         mClipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         mClipboardManager.addPrimaryClipChangedListener(this);
+        mDatabase = new Database(this);
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -71,6 +69,14 @@ public class TranslationService  extends IntentService implements ClipboardManag
         final TranslationServiceConnector connector = new TranslationServiceConnector(copiedText,mFrom,mTo, apiKey);
                 try {
                     mPair = connector.getOriginalAndTranslationAsWordPair();
+                    while(mPair == null){
+                        continue;
+                    }
+                    if(mDatabase.IsPairAlreadyInDatabase(mPair) == false)
+                    {
+                        mDatabase.storeWordPair(mPair);
+                    }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

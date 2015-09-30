@@ -2,6 +2,7 @@ package com.cohen.assaf.emptywords.views;
 
 import android.accounts.Account;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.Application;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -19,11 +20,16 @@ import android.widget.Toast;
 import android.provider.Settings.Secure;
 
 import com.cohen.assaf.emptywords.LanguagesSingleton;
+import com.cohen.assaf.emptywords.model.Database;
 import com.cohen.assaf.emptywords.model.Language;
 import com.cohen.assaf.emptywords.R;
 import com.cohen.assaf.emptywords.TranslationService;
+import com.cohen.assaf.emptywords.model.WordPair;
 import com.parse.Parse;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,10 +38,11 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity {
 
     //TODO nice gui,
-    // PARSE USERS!!!,// PARSE USERS!!!,// PARSE USERS!!!,// PARSE USERS!!!,
+    // complete store points,
     // proper notification bar,
     // stop service,
-    // proper widget,
+    // proper widget, loop through stored words,
+    //allow to store words in cloud
 
     public static final int FROM = 1;
     public static final int TO = 2;
@@ -68,6 +75,11 @@ public class MainActivity extends AppCompatActivity {
     public void stopTranslationService(){
         Intent i = new Intent(MainActivity.this, TranslationService.class);
         stopService(i);
+        Database db = new Database(this);
+        List<WordPair> allWords = db.getAllWords();
+        for(WordPair pair : allWords){
+            Toast.makeText(this, pair.getOriginal() + "--" + pair.getTranslation(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @OnClick(R.id.start_button)
@@ -90,10 +102,6 @@ public class MainActivity extends AppCompatActivity {
         LanguagesSingleton mSingleton = LanguagesSingleton.getInstance();
         mLanguageFrom = mSingleton.getLanguage(0);
         mLanguageTo = mSingleton.getLanguage(1);
-        TranslationService service = new TranslationService();
-
-
-
     }
 
     @Override

@@ -46,7 +46,7 @@ public class TranslationServiceConnector {
         call[0].enqueue(new Callback() {
             @Override
             public void onFailure(Request request, IOException e) {
-                //TODO handle failure
+                translation[0] = "Could not connect to network";
             }
 
             @Override
@@ -55,38 +55,21 @@ public class TranslationServiceConnector {
                     try {
                         translation[0] = getTextFromJsonData(response.body().string());
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        translation[0] = "could not read understand word";
                     }
 //todo connect to parse to store word
                 }
             }
         });
-
-        //this is needed to give enough time for call.enqueue to respond and thus for translation[0] to initialise
-        waitUntilTimeIsUp(translation[0]);
-
-        if(translation[0]== null ){
-            translation[0] = "Could not connect to network";
+        //this loop will give onResponse time to initialise translation[0]
+        //if call.enqueue returns onResponse and getTextFromJsonData does not
+        // throw an exception the loop will
+        //always break within a few seconds
+        while(translation[0] == null){
+            continue;
         }
         return new WordPair(mText, translation[0]);
     }
-
-    private void waitUntilTimeIsUp(String s) {
-        final boolean[] isTimeUp = {false};
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                isTimeUp[0] = true;
-                Log.d("time up", "time is up");
-            }
-        }, 900);
-
-        while(isTimeUp[0] == false){
-            continue;
-        }
-    }
-
     private String getTextFromJsonData(String jsonData) throws JSONException {
         JSONObject data = new JSONObject(jsonData);
         String translation = data.getString("text");
